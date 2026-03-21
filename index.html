@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MONO CNC Servis Formu</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f4f6f8;
+      font-family: Arial, sans-serif;
+      color: #222;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    .top-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .muted {
+      color: #666;
+      font-size: 14px;
+    }
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+    .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .grid-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    label {
+      font-size: 13px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, textarea, select, button {
+      font-family: inherit;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d8dde3;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #fff;
+    }
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .btn-primary {
+      background: #111827;
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .btn-danger {
+      background: #dc2626;
+      color: #fff;
+    }
+    .checkbox-group, .radio-group {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 10px 0 2px;
+    }
+    .checkbox-group label, .radio-group label {
+      margin: 0;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #d8dde3;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th {
+      background: #f8fafc;
+    }
+    .table-actions {
+      width: 90px;
+      text-align: center;
+    }
+    .totals {
+      max-width: 420px;
+      margin-left: auto;
+      margin-top: 18px;
+    }
+    .totals .row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed #ddd;
+      padding: 10px 0;
+      gap: 16px;
+    }
+    .totals .row strong {
+      font-size: 16px;
+    }
+    .signature-wrap {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .sig-box {
+      border: 1px solid #d8dde3;
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+    .sig-pad {
+      width: 100%;
+      height: 220px;
+      border: 1px dashed #999;
+      border-radius: 8px;
+      display: block;
+      touch-action: none;
+      background: #fff;
+    }
+    .status {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: none;
+      margin-top: 14px;
+    }
+    .status.success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
+    .status.error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4, .signature-wrap {
+        grid-template-columns: 1fr;
+      }
+      .top-title {
+        align-items: flex-start;
+      }
+      .container {
+        padding: 10px;
+      }
+      .card {
+        padding: 14px;
+      }
+      .sig-pad {
+        height: 180px;
+      }
+      th, td {
+        font-size: 12px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="top-title">
+        <div>
+          <div class="brand">MONO CNC SERVİS RAPORU</div>
+          <div class="muted">
+            MONO CNC Makinaları Bakım Onarım ve Teknik Servisi<br>
+            Telefon: 0544 384 7225 — E-Mail: info@monocnc.com
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-secondary" type="button" id="saveFirmBtn">Firmayı Kaydet</button>
+          <button class="btn-secondary" type="button" id="clearFirmBtn">Kayıtlı Firmaları Temizle</button>
+        </div>
+      </div>
+    </div>
+
+    <form id="serviceForm">
+      <div class="card">
+        <h2>Firma Bilgileri</h2>
+        <div class="grid grid-2">
+          <div>
+            <label>Kayıtlı Firma Seç</label>
+            <select id="savedFirmSelect">
+              <option value="">Firma seçin</option>
+            </select>
+          </div>
+          <div>
+            <label>Müşteri E-Posta</label>
+            <input type="email" id="customerEmail" name="customerEmail" placeholder="musteri@mail.com">
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:14px;">
+          <div>
+            <label>Firma Ünvanı</label>
+            <input type="text" id="companyName" name="companyName" required>
+          </div>
+          <div>
+            <label>Müşteri Kodu</label>
+            <input type="text" id="customerCode" name="customerCode">
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:14px;">
+          <div>
+            <label>Firma Adresi</label>
+            <textarea id="companyAddress" name="companyAddress"></textarea>
+          </div>
+          <div>
+            <div style="margin-bottom:14px;">
+              <label>Vergi Dairesi</label>
+              <input type="text" id="taxOffice" name="taxOffice">
+            </div>
+            <div>
+              <label>Vergi No</label>
+              <input type="text" id="taxNumber" name="taxNumber">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Servis Bilgileri</h2>
+
+        <div class="grid grid-4">
+          <div>
+            <label>Başlama Tarihi</label>
+            <input type="date" id="startDate" name="startDate">
+          </div>
+          <div>
+            <label>Bitiş Tarihi</label>
+            <input type="date" id="endDate" name="endDate">
+          </div>
+          <div>
+            <label>Servis Yetkilisi</label>
+            <input type="text" id="serviceStaff" name="serviceStaff" value="Anıl Demiral">
+          </div>
+          <div>
+            <label>Servis Yetkilisi Mail</label>
+            <input type="email" id="serviceStaffEmail" name="serviceStaffEmail" value="anildemiral@monocnc.com">
+          </div>
+        </div>
+
+        <div style="margin-top:18px;">
+          <label>Arıza Türü</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="faultType" value="Elektronik"> Elektronik</label>
+            <label><input type="checkbox" name="faultType" value="Mekanik"> Mekanik</label>
+            <label><input type="checkbox" name="faultType" value="Kurulum"> Kurulum</label>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;">
+          <label>Servis Türü</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="serviceType" value="Ücretli"> Ücretli</label>
+            <label><input type="checkbox" name="serviceType" value="Teklif"> Teklif</label>
+            <label><input type="checkbox" name="serviceType" value="Anlaşmalı Bakım"> Anlaşmalı Bakım</label>
+          </div>
+        </div>
+
+        <div class="grid grid-3" style="margin-top:18px;">
+          <div>
+            <label>Makina Modeli</label>
+            <input type="text" id="machineModel" name="machineModel">
+          </div>
+          <div>
+            <label>Makina Seri No</label>
+            <input type="text" id="machineSerial" name="machineSerial">
+          </div>
+          <div>
+            <label>Kontrol Modeli</label>
+            <input type="text" id="controlModel" name="controlModel">
+          </div>
+        </div>
+
+        <div style="margin-top:18px;">
+          <label>Yapılan İşler</label>
+          <textarea id="workDone" name="workDone"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="actions" style="justify-content: space-between;">
+          <h2 style="margin:0;">Kullanılan Malzemeler</h2>
+          <button class="btn-secondary" type="button" id="addMaterialBtn">+ Malzeme Ekle</button>
+        </div>
+
+        <table id="materialsTable">
+          <thead>
+            <tr>
+              <th>Malzeme</th>
+              <th>Seri No</th>
+              <th>Miktar</th>
+              <th>Birim</th>
+              <th>Birim Fiyat</th>
+              <th>Toplam</th>
+              <th class="table-actions">Sil</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="totals">
+          <div class="row">
+            <span>Toplam Malzeme</span>
+            <strong id="totalMaterialsText">0.00 ₺</strong>
+          </div>
+          <div class="row">
+            <span>İşçilik</span>
+            <input type="number" step="0.01" id="laborCost" name="laborCost" value="0">
+          </div>
+          <div class="row">
+            <span>Ulaşım</span>
+            <input type="number" step="0.01" id="travelCost" name="travelCost" value="0">
+          </div>
+          <div class="row">
+            <span>Konaklama</span>
+            <input type="number" step="0.01" id="lodgingCost" name="lodgingCost" value="0">
+          </div>
+          <div class="row">
+            <span>Ara Toplam</span>
+            <strong id="subTotalText">0.00 ₺</strong>
+          </div>
+          <div class="row">
+            <span>KDV %20</span>
+            <strong id="vatText">0.00 ₺</strong>
+          </div>
+          <div class="row">
+            <span>Genel Toplam</span>
+            <strong id="grandTotalText">0.00 ₺</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Süre Bilgileri</h2>
+        <div class="grid grid-4">
+          <div>
+            <label>Ulaşım Süresi (saat)</label>
+            <input type="number" step="0.01" id="travelHours" name="travelHours" value="0">
+          </div>
+          <div>
+            <label>Çalışma Başlangıç</label>
+            <input type="time" id="workStartTime" name="workStartTime">
+          </div>
+          <div>
+            <label>Çalışma Bitiş</label>
+            <input type="time" id="workEndTime" name="workEndTime">
+          </div>
+          <div>
+            <label>Çalışma Süresi (saat)</label>
+            <input type="number" step="0.01" id="workHours" name="workHours" value="0">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>İmzalar</h2>
+        <div class="signature-wrap">
+          <div class="sig-box">
+            <label>Firma Yetkilisi</label>
+            <input type="text" id="companyOfficer" name="companyOfficer" placeholder="Ad Soyad">
+            <canvas id="companySig" class="sig-pad"></canvas>
+            <div class="actions" style="margin-top:10px;">
+              <button type="button" class="btn-secondary" id="clearCompanySig">İmzayı Temizle</button>
+            </div>
+          </div>
+
+          <div class="sig-box">
+            <label>Servis Yetkilisi İmzası</label>
+            <input type="text" id="serviceOfficerName" name="serviceOfficerName" placeholder="Ad Soyad">
+            <canvas id="serviceSig" class="sig-pad"></canvas>
+            <div class="actions" style="margin-top:10px;">
+              <button type="button" class="btn-secondary" id="clearServiceSig">İmzayı Temizle</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="actions">
+          <button type="submit" class="btn-primary">PDF Oluştur ve Gönder</button>
+          <button type="button" class="btn-secondary" id="previewDataBtn">Form Verisini Kontrol Et</button>
+        </div>
+        <div id="statusBox" class="status"></div>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+  <script>
+    const API_URL = "http://localhost:3000/api/pdf";
+    const FIRMS_KEY = "mono_cnc_firms";
+
+    const materialsTableBody = document.querySelector("#materialsTable tbody");
+    const totalMaterialsText = document.getElementById("totalMaterialsText");
+    const subTotalText = document.getElementById("subTotalText");
+    const vatText = document.getElementById("vatText");
+    const grandTotalText = document.getElementById("grandTotalText");
+    const savedFirmSelect = document.getElementById("savedFirmSelect");
+    const statusBox = document.getElementById("statusBox");
+
+    const companyCanvas = document.getElementById("companySig");
+    const serviceCanvas = document.getElementById("serviceSig");
+    const companyPad = new SignaturePad(companyCanvas);
+    const servicePad = new SignaturePad(serviceCanvas);
+
+    function showStatus(message, type = "success") {
+      statusBox.className = "status " + type;
+      statusBox.textContent = message;
+    }
+
+    function formatMoney(value) {
+      return Number(value || 0).toFixed(2) + " ₺";
+    }
+
+    function resizeCanvas(canvas, pad) {
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      canvas.getContext("2d").scale(ratio, ratio);
+      pad.clear();
+    }
+
+    function resizeAllCanvases() {
+      resizeCanvas(companyCanvas, companyPad);
+      resizeCanvas(serviceCanvas, servicePad);
+    }
+
+    window.addEventListener("resize", resizeAllCanvases);
+    resizeAllCanvases();
+
+    document.getElementById("clearCompanySig").addEventListener("click", () => companyPad.clear());
+    document.getElementById("clearServiceSig").addEventListener("click", () => servicePad.clear());
+
+    function addMaterialRow(material = {}) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><input type="text" class="material-name" value="${material.name || ""}"></td>
+        <td><input type="text" class="material-serial" value="${material.serial || ""}"></td>
+        <td><input type="number" step="0.01" class="material-qty" value="${material.qty || 1}"></td>
+        <td><input type="text" class="material-unit" value="${material.unit || "Adet"}"></td>
+        <td><input type="number" step="0.01" class="material-unit-price" value="${material.unitPrice || 0}"></td>
+        <td><input type="number" step="0.01" class="material-total" value="${material.total || 0}" readonly></td>
+        <td class="table-actions"><button type="button" class="btn-danger remove-row">Sil</button></td>
+      `;
+      materialsTableBody.appendChild(tr);
+
+      tr.querySelectorAll("input").forEach(input => {
+        input.addEventListener("input", calculateTotals);
+      });
+
+      tr.querySelector(".remove-row").addEventListener("click", () => {
+        tr.remove();
+        calculateTotals();
+      });
+
+      calculateTotals();
+    }
+
+    document.getElementById("addMaterialBtn").addEventListener("click", () => addMaterialRow());
+
+    function calculateTotals() {
+      let totalMaterials = 0;
+
+      document.querySelectorAll("#materialsTable tbody tr").forEach(row => {
+        const qty = Number(row.querySelector(".material-qty").value || 0);
+        const unitPrice = Number(row.querySelector(".material-unit-price").value || 0);
+        const total = qty * unitPrice;
+        row.querySelector(".material-total").value = total.toFixed(2);
+        totalMaterials += total;
+      });
+
+      const labor = Number(document.getElementById("laborCost").value || 0);
+      const travel = Number(document.getElementById("travelCost").value || 0);
+      const lodging = Number(document.getElementById("lodgingCost").value || 0);
+
+      const subTotal = totalMaterials + labor + travel + lodging;
+      const vat = subTotal * 0.20;
+      const grandTotal = subTotal + vat;
+
+      totalMaterialsText.textContent = formatMoney(totalMaterials);
+      subTotalText.textContent = formatMoney(subTotal);
+      vatText.textContent = formatMoney(vat);
+      grandTotalText.textContent = formatMoney(grandTotal);
+    }
+
+    ["laborCost", "travelCost", "lodgingCost"].forEach(id => {
+      document.getElementById(id).addEventListener("input", calculateTotals);
+    });
+
+    function getSavedFirms() {
+      return JSON.parse(localStorage.getItem(FIRMS_KEY) || "[]");
+    }
+
+    function setSavedFirms(firms) {
+      localStorage.setItem(FIRMS_KEY, JSON.stringify(firms));
+    }
+
+    function fillFirmSelect() {
+      const firms = getSavedFirms();
+      savedFirmSelect.innerHTML = '<option value="">Firma seçin</option>';
+
+      firms.forEach((firm, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = firm.companyName;
+        savedFirmSelect.appendChild(option);
+      });
+    }
+
+    function getFirmFormData() {
+      return {
+        companyName: document.getElementById("companyName").value,
+        companyAddress: document.getElementById("companyAddress").value,
+        taxOffice: document.getElementById("taxOffice").value,
+        taxNumber: document.getElementById("taxNumber").value,
+        customerEmail: document.getElementById("customerEmail").value,
+        customerCode: document.getElementById("customerCode").value
+      };
+    }
+
+    document.getElementById("saveFirmBtn").addEventListener("click", () => {
+      const firm = getFirmFormData();
+      if (!firm.companyName.trim()) {
+        showStatus("Önce firma ünvanı gir.", "error");
+        return;
+      }
+
+      const firms = getSavedFirms();
+      const existingIndex = firms.findIndex(f => f.companyName.toLowerCase() === firm.companyName.toLowerCase());
+
+      if (existingIndex >= 0) {
+        firms[existingIndex] = firm;
+      } else {
+        firms.push(firm);
+      }
+
+      setSavedFirms(firms);
+      fillFirmSelect();
+      showStatus("Firma kaydedildi.");
+    });
+
+    document.getElementById("clearFirmBtn").addEventListener("click", () => {
+      if (!confirm("Tüm kayıtlı firmaları silmek istiyor musun?")) return;
+      localStorage.removeItem(FIRMS_KEY);
+      fillFirmSelect();
+      showStatus("Kayıtlı firmalar temizlendi.");
+    });
+
+    savedFirmSelect.addEventListener("change", () => {
+      const firms = getSavedFirms();
+      const selected = firms[savedFirmSelect.value];
+      if (!selected) return;
+
+      document.getElementById("companyName").value = selected.companyName || "";
+      document.getElementById("companyAddress").value = selected.companyAddress || "";
+      document.getElementById("taxOffice").value = selected.taxOffice || "";
+      document.getElementById("taxNumber").value = selected.taxNumber || "";
+      document.getElementById("customerEmail").value = selected.customerEmail || "";
+      document.getElementById("customerCode").value = selected.customerCode || "";
+    });
+
+    function getCheckedValues(name) {
+      return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(el => el.value);
+    }
+
+    function getMaterials() {
+      return [...document.querySelectorAll("#materialsTable tbody tr")].map(row => ({
+        name: row.querySelector(".material-name").value,
+        serial: row.querySelector(".material-serial").value,
+        qty: Number(row.querySelector(".material-qty").value || 0),
+        unit: row.querySelector(".material-unit").value,
+        unitPrice: Number(row.querySelector(".material-unit-price").value || 0),
+        total: Number(row.querySelector(".material-total").value || 0)
+      }));
+    }
+
+    function buildPayload() {
+      const totalMaterials = parseFloat(totalMaterialsText.textContent.replace(" ₺","")) || 0;
+      const subTotal = parseFloat(subTotalText.textContent.replace(" ₺","")) || 0;
+      const vat = parseFloat(vatText.textContent.replace(" ₺","")) || 0;
+      const grandTotal = parseFloat(grandTotalText.textContent.replace(" ₺","")) || 0;
+
+      return {
+        companyName: document.getElementById("companyName").value,
+        companyAddress: document.getElementById("companyAddress").value,
+        taxOffice: document.getElementById("taxOffice").value,
+        taxNumber: document.getElementById("taxNumber").value,
+        customerEmail: document.getElementById("customerEmail").value,
+        customerCode: document.getElementById("customerCode").value,
+        startDate: document.getElementById("startDate").value,
+        endDate: document.getElementById("endDate").value,
+        serviceStaff: document.getElementById("serviceStaff").value,
+        serviceStaffEmail: document.getElementById("serviceStaffEmail").value,
+        faultTypes: getCheckedValues("faultType"),
+        serviceTypes: getCheckedValues("serviceType"),
+        machineModel: document.getElementById("machineModel").value,
+        machineSerial: document.getElementById("machineSerial").value,
+        controlModel: document.getElementById("controlModel").value,
+        workDone: document.getElementById("workDone").value,
+        materials: getMaterials(),
+        laborCost: Number(document.getElementById("laborCost").value || 0),
+        travelCost: Number(document.getElementById("travelCost").value || 0),
+        lodgingCost: Number(document.getElementById("lodgingCost").value || 0),
+        totalMaterials,
+        subTotal,
+        vat,
+        grandTotal,
+        travelHours: Number(document.getElementById("travelHours").value || 0),
+        workStartTime: document.getElementById("workStartTime").value,
+        workEndTime: document.getElementById("workEndTime").value,
+        workHours: Number(document.getElementById("workHours").value || 0),
+        companyOfficer: document.getElementById("companyOfficer").value,
+        serviceOfficerName: document.getElementById("serviceOfficerName").value,
+        companySignature: companyPad.isEmpty() ? "" : companyPad.toDataURL("image/png"),
+        serviceSignature: servicePad.isEmpty() ? "" : servicePad.toDataURL("image/png")
+      };
+    }
+
+    document.getElementById("previewDataBtn").addEventListener("click", () => {
+      const payload = buildPayload();
+      console.log(payload);
+      showStatus("Form verisi console'a yazdırıldı.");
+    });
+
+    document.getElementById("serviceForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      try {
+        calculateTotals();
+
+        const payload = buildPayload();
+
+        if (!payload.companyName.trim()) {
+          showStatus("Firma ünvanı zorunlu.", "error");
+          return;
+        }
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const resultText = await response.text();
+
+        if (!response.ok) {
+          throw new Error(resultText || "Bir hata oluştu.");
+        }
+
+        showStatus(resultText, "success");
+      } catch (error) {
+        console.error(error);
+        showStatus("Hata: " + error.message, "error");
+      }
+    });
+
+    addMaterialRow();
+    fillFirmSelect();
+    calculateTotals();
+  </script>
+</body>
+</html>
