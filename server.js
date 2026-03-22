@@ -1,6 +1,5 @@
 const express = require("express");
 const puppeteer = require("puppeteer-core");
-const nodemailer = require("nodemailer");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
@@ -326,20 +325,21 @@ function buildPdfHtml(data) {
 
 app.post("/api/pdf", async (req, res) => {
   let browser;
+  let pdfPath = null;
 
   try {
     const data = req.body;
 
     const fileName = `servis-raporu-${Date.now()}.pdf`;
-    const pdfPath = path.join(__dirname, fileName);
+    pdfPath = path.join(__dirname, fileName);
 
     const html = buildPdfHtml(data);
 
     browser = await puppeteer.launch({
-  headless: true,
-  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
-  args: ["--no-sandbox", "--disable-setuid-sandbox"]
-});
+      headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
@@ -362,41 +362,31 @@ app.post("/api/pdf", async (req, res) => {
       return res.status(500).send("PDF oluşturulamadı.");
     }
 
-    const gmailUser = "irfannkoklu@gmail.com";
-    const gmailPass = "kqsrnwnzfxshwfsk";
-
-    if (data.customerEmail && gmailUser !== "MAILIN@gmail.com" && gmailPass !== "APP_PASSWORD") {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: gmailUser,
-          pass: gmailPass
+    res.download(pdfPath, fileName, (err) => {
+      try {
+        if (pdfPath && fs.existsSync(pdfPath)) {
+          fs.unlinkSync(pdfPath);
         }
-      });
+      } catch (_) {}
 
-      await transporter.sendMail({
-        from: `"MONO CNC Servis" <${gmailUser}>`,
-        to: data.customerEmail,
-        subject: "Servis Raporu PDF",
-        text: "Hazırlanan servis raporu ektedir.",
-        attachments: [
-          {
-            filename: fileName,
-            path: pdfPath
-          }
-        ]
-      });
-
-      return res.send(`PDF oluşturuldu ve ${data.customerEmail} adresine gönderildi.`);
-    }
-
-    return res.send(`PDF oluşturuldu. Mail göndermek için server.js içindeki Gmail bilgilerini doldur. Dosya: ${fileName}`);
+      if (err && !res.headersSent) {
+        res.status(500).send("PDF indirilemedi.");
+      }
+    });
   } catch (error) {
     console.error("SERVER HATASI:", error);
 
     if (browser) {
       try {
         await browser.close();
+      } catch (_) {}
+    }
+
+    if (pdfPath) {
+      try {
+        if (fs.existsSync(pdfPath)) {
+          fs.unlinkSync(pdfPath);
+        }
       } catch (_) {}
     }
 
