@@ -1,19 +1,15 @@
 {
-  "name": "servis-saas",
+  "name": "servis-saas-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "nodemailer": "^8.0.3",
-    "puppeteer": "^24.40.0"
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "nodemailer": "^7.0.3",
+    "puppeteer": "^24.6.1"
   }
 }
