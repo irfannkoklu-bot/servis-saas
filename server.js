@@ -46,150 +46,206 @@ function buildPdfHtml(data) {
     <meta charset="UTF-8" />
     <title>Servis Raporu</title>
     <style>
+      @page {
+        size: A4;
+        margin: 5mm;
+      }
+
       body {
         font-family: Arial, sans-serif;
         color: #111;
-        padding: 28px;
-        font-size: 12px;
+        padding: 8px;
+        font-size: 9px;
+        line-height: 1.2;
+        page-break-inside: avoid;
       }
+
       .header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        border-bottom: 2px solid #111;
-        padding-bottom: 12px;
-        margin-bottom: 16px;
-      }
-      .title {
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 6px;
-      }
-      .sub {
-        font-size: 12px;
-        line-height: 1.5;
-      }
-      .section-title {
-        margin-top: 20px;
+        border-bottom: 1.5px solid #111;
+        padding-bottom: 6px;
         margin-bottom: 8px;
-        font-size: 15px;
-        font-weight: 700;
-        border-left: 4px solid #111;
-        padding-left: 8px;
       }
+
+      .title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+
+      .sub {
+        font-size: 9px;
+        line-height: 1.25;
+      }
+
+      .section-title {
+        margin-top: 7px;
+        margin-bottom: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        border-left: 3px solid #111;
+        padding-left: 6px;
+        page-break-inside: avoid;
+      }
+
       .grid-2, .grid-3, .grid-4 {
         display: grid;
-        gap: 10px;
-        margin-bottom: 10px;
+        gap: 5px;
+        margin-bottom: 5px;
       }
+
       .grid-2 { grid-template-columns: 1fr 1fr; }
       .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
       .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
       .field {
         border: 1px solid #ccc;
-        padding: 8px;
-        border-radius: 6px;
-        min-height: 44px;
+        padding: 4px 5px;
+        border-radius: 4px;
+        min-height: 24px;
+        page-break-inside: avoid;
       }
+
       .label {
-        font-size: 10px;
+        font-size: 8px;
         color: #444;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
         font-weight: 700;
         text-transform: uppercase;
       }
+
       .value {
         white-space: pre-wrap;
         word-break: break-word;
       }
+
       table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 8px;
+        margin-top: 4px;
+        page-break-inside: avoid;
       }
+
       th, td {
         border: 1px solid #ccc;
-        padding: 8px;
-        font-size: 11px;
+        padding: 3px 4px;
+        font-size: 8px;
         text-align: left;
+        vertical-align: top;
       }
+
       th {
         background: #f3f4f6;
       }
+
       .totals {
-        width: 320px;
+        width: 260px;
         margin-left: auto;
-        margin-top: 12px;
+        margin-top: 6px;
+        page-break-inside: avoid;
       }
+
       .totals-row {
         display: flex;
         justify-content: space-between;
         border-bottom: 1px dashed #ccc;
-        padding: 6px 0;
-        gap: 16px;
+        padding: 2px 0;
+        gap: 8px;
+        font-size: 8px;
       }
+
       .signatures {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-top: 28px;
+        gap: 8px;
+        margin-top: 8px;
+        page-break-inside: avoid;
       }
+
       .sig-card {
         border: 1px solid #ccc;
-        padding: 12px;
-        border-radius: 8px;
-        min-height: 180px;
+        padding: 6px;
+        border-radius: 5px;
+        min-height: 78px;
+        page-break-inside: avoid;
       }
+
       .sig-title {
         font-weight: 700;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
+        font-size: 8px;
       }
+
       .sig-name {
-        margin-bottom: 8px;
+        margin-bottom: 4px;
+        font-size: 8px;
       }
+
       .sig-img {
         width: 100%;
-        max-height: 100px;
+        max-height: 40px;
         object-fit: contain;
         border-top: 1px dashed #999;
-        padding-top: 10px;
+        padding-top: 5px;
       }
+
       .footer-note {
-        margin-top: 24px;
+        margin-top: 6px;
         color: #666;
-        font-size: 10px;
+        font-size: 7px;
+      }
+
+      .logo-wrap {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .logo {
+        width: 62px;
+        height: auto;
+      }
+
+      .header-right {
+        text-align: right;
+        font-size: 9px;
+      }
+
+      .compact {
+        margin-top: 4px;
+      }
+
+      .avoid-break {
+        page-break-inside: avoid;
       }
     </style>
   </head>
   <body>
-  <div class="header" style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:20px;">
+    <div class="header avoid-break">
+      <div class="logo-wrap">
+        <img
+          src="https://raw.githubusercontent.com/irfannkoklu-bot/servis-saas-frontend/main/logo.png"
+          class="logo"
+        />
 
-  <!-- SOL TARAF -->
-  <div style="display:flex; gap:15px; align-items:flex-start;">
-    
-    <img src="https://raw.githubusercontent.com/irfannkoklu-bot/servis-saas-frontend/main/logo.png" 
-         style="width:90px; height:auto;" />
+        <div>
+          <div class="title">SERVİS RAPORU</div>
+          <div class="sub">
+            <strong>MONO CNC MAKİNALARI</strong><br>
+            Bakım Onarım ve Teknik Servisi<br>
+            Telefon: 0544 384 7225<br>
+            E-Mail: info@monocnc.com
+          </div>
+        </div>
+      </div>
 
-    <div>
-      <div style="font-size:22px; font-weight:bold;">SERVİS RAPORU</div>
-      
-      <div style="font-size:12px; margin-top:5px;">
-        <strong>MONO CNC MAKİNALARI</strong><br>
-        Bakım Onarım ve Teknik Servisi<br>
-        Telefon: 0544 384 7225<br>
-        E-Mail: info@monocnc.com
+      <div class="header-right">
+        <strong>Başlama:</strong> ${safe(data.startDate)}<br>
+        <strong>Bitiş:</strong> ${safe(data.endDate)}
       </div>
     </div>
-
-  </div>
-
-  <!-- SAĞ TARAF -->
-  <div style="text-align:right; font-size:12px;">
-    <strong>Başlama:</strong> ${safe(data.startDate)}<br>
-    <strong>Bitiş:</strong> ${safe(data.endDate)}
-  </div>
-
-</div>
 
     <div class="section-title">Firma Bilgileri</div>
     <div class="grid-2">
@@ -209,7 +265,7 @@ function buildPdfHtml(data) {
         <div class="value">${safe(data.companyAddress)}</div>
       </div>
       <div>
-        <div class="field" style="margin-bottom:10px;">
+        <div class="field" style="margin-bottom:5px;">
           <div class="label">Vergi Dairesi</div>
           <div class="value">${safe(data.taxOffice)}</div>
         </div>
@@ -251,13 +307,13 @@ function buildPdfHtml(data) {
       </div>
     </div>
 
-    <div class="field">
+    <div class="field compact">
       <div class="label">Yapılan İşler</div>
       <div class="value">${safe(data.workDone)}</div>
     </div>
 
     <div class="section-title">Kullanılan Malzemeler</div>
-    <table>
+    <table class="avoid-break">
       <thead>
         <tr>
           <th>Malzeme</th>
@@ -356,15 +412,17 @@ app.post("/api/pdf", async (req, res) => {
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
+
     await page.pdf({
       path: pdfPath,
       format: "A4",
       printBackground: true,
+      preferCSSPageSize: true,
       margin: {
-        top: "12mm",
-        right: "10mm",
-        bottom: "12mm",
-        left: "10mm"
+        top: "5mm",
+        right: "5mm",
+        bottom: "5mm",
+        left: "5mm"
       }
     });
 
