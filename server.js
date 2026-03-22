@@ -163,6 +163,7 @@ function buildPdfHtml(data) {
   </head>
   <body>
     <div class="header">
+    <img src="https://raw.githubusercontent.com/irfannkoklu-bot/servis-saas-frontend/main/logo.png" style="width:80px; margin-bottom:10px;" />
       <div>
         <div class="title">SERVİS RAPORU</div>
         <div class="sub">
