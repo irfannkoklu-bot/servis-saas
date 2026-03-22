@@ -362,8 +362,8 @@ app.post("/api/pdf", async (req, res) => {
       return res.status(500).send("PDF oluşturulamadı.");
     }
 
-    const gmailUser = "MAILIN@gmail.com";
-    const gmailPass = "APP_PASSWORD";
+    const gmailUser = "irfannkoklu@gmail.com";
+    const gmailPass = "kqsrnwnzfxshwfsk";
 
     if (data.customerEmail && gmailUser !== "MAILIN@gmail.com" && gmailPass !== "APP_PASSWORD") {
       const transporter = nodemailer.createTransport({
