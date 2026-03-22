@@ -336,10 +336,10 @@ app.post("/api/pdf", async (req, res) => {
     const html = buildPdfHtml(data);
 
     browser = await puppeteer.launch({
-      headless: true,
-      executablePath: "/usr/bin/chromium",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
+  headless: true,
+  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
