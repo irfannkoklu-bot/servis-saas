@@ -162,22 +162,34 @@ function buildPdfHtml(data) {
     </style>
   </head>
   <body>
-    <div class="header">
-    <img src="https://raw.githubusercontent.com/irfannkoklu-bot/servis-saas-frontend/main/logo.png" style="width:80px; margin-bottom:10px;" />
-      <div>
-        <div class="title">SERVİS RAPORU</div>
-        <div class="sub">
-          <strong>MONO CNC MAKİNALARI</strong><br>
-          Bakım Onarım ve Teknik Servisi<br>
-          Telefon: 0544 384 7225<br>
-          E-Mail: info@monocnc.com
-        </div>
-      </div>
-      <div class="sub" style="text-align:right;">
-        <strong>Başlama:</strong> ${safe(data.startDate)}<br>
-        <strong>Bitiş:</strong> ${safe(data.endDate)}
+  <div class="header" style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:20px;">
+
+  <!-- SOL TARAF -->
+  <div style="display:flex; gap:15px; align-items:flex-start;">
+    
+    <img src="https://raw.githubusercontent.com/irfannkoklu-bot/servis-saas-frontend/main/logo.png" 
+         style="width:90px; height:auto;" />
+
+    <div>
+      <div style="font-size:22px; font-weight:bold;">SERVİS RAPORU</div>
+      
+      <div style="font-size:12px; margin-top:5px;">
+        <strong>MONO CNC MAKİNALARI</strong><br>
+        Bakım Onarım ve Teknik Servisi<br>
+        Telefon: 0544 384 7225<br>
+        E-Mail: info@monocnc.com
       </div>
     </div>
+
+  </div>
+
+  <!-- SAĞ TARAF -->
+  <div style="text-align:right; font-size:12px;">
+    <strong>Başlama:</strong> ${safe(data.startDate)}<br>
+    <strong>Bitiş:</strong> ${safe(data.endDate)}
+  </div>
+
+</div>
 
     <div class="section-title">Firma Bilgileri</div>
     <div class="grid-2">
