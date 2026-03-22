@@ -55,7 +55,7 @@ function buildPdfHtml(data) {
         font-family: Arial, sans-serif;
         color: #111;
         padding: 8px;
-        font-size: 9px;
+        font-size: 10.5px;
         line-height: 1.2;
         page-break-inside: avoid;
       }
@@ -70,20 +70,20 @@ function buildPdfHtml(data) {
       }
 
       .title {
-        font-size: 17px;
+        font-size: 19px;
         font-weight: 700;
         margin-bottom: 3px;
       }
 
       .sub {
-        font-size: 9px;
+        font-size: 10px;
         line-height: 1.25;
       }
 
       .section-title {
         margin-top: 7px;
         margin-bottom: 4px;
-        font-size: 10px;
+        font-size: 11.5px;
         font-weight: 700;
         border-left: 3px solid #111;
         padding-left: 6px;
@@ -109,7 +109,7 @@ function buildPdfHtml(data) {
       }
 
       .label {
-        font-size: 8px;
+        font-size: 9.5px;
         color: #444;
         margin-bottom: 2px;
         font-weight: 700;
@@ -131,7 +131,7 @@ function buildPdfHtml(data) {
       th, td {
         border: 1px solid #ccc;
         padding: 3px 4px;
-        font-size: 8px;
+        font-size: 9.5px;
         text-align: left;
         vertical-align: top;
       }
@@ -153,7 +153,7 @@ function buildPdfHtml(data) {
         border-bottom: 1px dashed #ccc;
         padding: 2px 0;
         gap: 8px;
-        font-size: 8px;
+        font-size: 9.5px;
       }
 
       .signatures {
@@ -175,12 +175,12 @@ function buildPdfHtml(data) {
       .sig-title {
         font-weight: 700;
         margin-bottom: 4px;
-        font-size: 8px;
+        font-size: 9px;
       }
 
       .sig-name {
         margin-bottom: 4px;
-        font-size: 8px;
+        font-size: 9px;
       }
 
       .sig-img {
