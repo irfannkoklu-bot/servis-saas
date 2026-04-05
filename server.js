@@ -12,8 +12,12 @@ app.get("/", (req, res) => {
   res.send("Server çalışıyor!");
 });
 
-function money(value) {
-  return `${Number(value || 0).toFixed(2)} ₺`;
+function getCurrencySymbol(currency) {
+  return currency === "USD" ? "$" : "₺";
+}
+
+function money(value, currency = "TL") {
+  return `${Number(value || 0).toFixed(2)} ${getCurrencySymbol(currency)}`;
 }
 
 function safe(value) {
@@ -25,14 +29,16 @@ function safe(value) {
 }
 
 function buildPdfHtml(data) {
+  const currency = data.currency || "TL";
+
   const materialsRows = (data.materials || []).map(item => `
     <tr>
       <td>${safe(item.name)}</td>
       <td>${safe(item.serial)}</td>
       <td>${safe(item.qty)}</td>
       <td>${safe(item.unit)}</td>
-      <td>${money(item.unitPrice)}</td>
-      <td>${money(item.total)}</td>
+      <td>${money(item.unitPrice, currency)}</td>
+      <td>${money(item.total, currency)}</td>
     </tr>
   `).join("");
 
@@ -252,7 +258,8 @@ function buildPdfHtml(data) {
 
       <div class="header-right">
         <strong>Başlama:</strong> ${safe(data.startDate)}<br>
-        <strong>Bitiş:</strong> ${safe(data.endDate)}
+        <strong>Bitiş:</strong> ${safe(data.endDate)}<br>
+        <strong>Para Birimi:</strong> ${safe(currency)}
       </div>
     </div>
 
@@ -354,13 +361,13 @@ function buildPdfHtml(data) {
     </table>
 
     <div class="totals">
-      <div class="totals-row"><span>Toplam Malzeme</span><strong>${money(data.totalMaterials)}</strong></div>
-      <div class="totals-row"><span>İşçilik</span><strong>${money(data.laborCost)}</strong></div>
-      <div class="totals-row"><span>Ulaşım</span><strong>${money(data.travelCost)}</strong></div>
-      <div class="totals-row"><span>Konaklama</span><strong>${money(data.lodgingCost)}</strong></div>
-      <div class="totals-row"><span>Ara Toplam</span><strong>${money(data.subTotal)}</strong></div>
-      <div class="totals-row"><span>KDV %20</span><strong>${money(data.vat)}</strong></div>
-      <div class="totals-row"><span>Genel Toplam</span><strong>${money(data.grandTotal)}</strong></div>
+      <div class="totals-row"><span>Toplam Malzeme</span><strong>${money(data.totalMaterials, currency)}</strong></div>
+      <div class="totals-row"><span>İşçilik</span><strong>${money(data.laborCost, currency)}</strong></div>
+      <div class="totals-row"><span>Ulaşım</span><strong>${money(data.travelCost, currency)}</strong></div>
+      <div class="totals-row"><span>Konaklama</span><strong>${money(data.lodgingCost, currency)}</strong></div>
+      <div class="totals-row"><span>Ara Toplam</span><strong>${money(data.subTotal, currency)}</strong></div>
+      <div class="totals-row"><span>KDV %20</span><strong>${money(data.vat, currency)}</strong></div>
+      <div class="totals-row"><span>Genel Toplam</span><strong>${money(data.grandTotal, currency)}</strong></div>
     </div>
 
     <div class="section-title">Süre Bilgileri</div>
