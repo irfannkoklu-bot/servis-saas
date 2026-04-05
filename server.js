@@ -3,6 +3,7 @@ const puppeteer = require("puppeteer-core");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const nodemailer = require("nodemailer");
 
 const app = express();
 app.use(cors());
@@ -10,6 +11,14 @@ app.use(express.json({ limit: "20mb" }));
 
 app.get("/", (req, res) => {
   res.send("Server çalışıyor!");
+});
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "irfannkoklu@gmail.com",
+    pass: "exji sram ycef ands"
+  }
 });
 
 function getCurrencySymbol(currency) {
@@ -489,6 +498,30 @@ app.post("/api/pdf", async (req, res) => {
 
     await browser.close();
     browser = null;
+
+    try {
+      const recipients = ["irfannkoklu@gmail.com"];
+      if (data.customerEmail && String(data.customerEmail).trim()) {
+        recipients.push(String(data.customerEmail).trim());
+      }
+
+      await transporter.sendMail({
+        from: '"Mono CNC" <irfannkoklu@gmail.com>',
+        to: recipients.join(", "),
+        subject: "Servis Raporu",
+        text: "Servis raporunuz ektedir.",
+        attachments: [
+          {
+            filename: fileName,
+            path: pdfPath
+          }
+        ]
+      });
+
+      console.log("MAIL GÖNDERİLDİ");
+    } catch (mailError) {
+      console.log("MAIL HATASI:", mailError.message);
+    }
 
     if (!fs.existsSync(pdfPath)) {
       return res.status(500).send("PDF oluşturulamadı.");
