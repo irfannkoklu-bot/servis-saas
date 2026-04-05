@@ -36,6 +36,15 @@ function buildPdfHtml(data) {
     </tr>
   `).join("");
 
+  const workDaysRows = (data.workDays || []).map(day => `
+    <tr>
+      <td>${safe(day.date)}</td>
+      <td>${safe(day.start)}</td>
+      <td>${safe(day.end)}</td>
+      <td>${safe(day.total)} saat</td>
+    </tr>
+  `).join("");
+
   const faultTypes = (data.faultTypes || []).join(", ");
   const serviceTypes = (data.serviceTypes || []).join(", ");
 
@@ -311,6 +320,21 @@ function buildPdfHtml(data) {
       <div class="label">Yapılan İşler</div>
       <div class="value">${safe(data.workDone)}</div>
     </div>
+
+    <div class="section-title">Çalışma Günleri</div>
+    <table class="avoid-break">
+      <thead>
+        <tr>
+          <th>Tarih</th>
+          <th>Başlangıç</th>
+          <th>Bitiş</th>
+          <th>Günlük Süre</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${workDaysRows || `<tr><td colspan="4">Çalışma günü girilmedi.</td></tr>`}
+      </tbody>
+    </table>
 
     <div class="section-title">Kullanılan Malzemeler</div>
     <table class="avoid-break">
