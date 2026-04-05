@@ -28,6 +28,13 @@ function safe(value) {
     .replaceAll(">", "&gt;");
 }
 
+function formatDateTR(dateStr) {
+  if (!dateStr) return "";
+  const parts = String(dateStr).split("-");
+  if (parts.length !== 3) return safe(dateStr);
+  return `${parts[2]}.${parts[1]}.${parts[0]}`;
+}
+
 function buildPdfHtml(data) {
   const currency = data.currency || "TL";
 
@@ -44,9 +51,12 @@ function buildPdfHtml(data) {
 
   const workDaysRows = (data.workDays || []).map(day => `
     <tr>
-      <td>${safe(day.date)}</td>
+      <td>${formatDateTR(day.date)}</td>
+      <td>${safe(day.travel)} saat</td>
       <td>${safe(day.start)}</td>
       <td>${safe(day.end)}</td>
+      <td>${safe(day.inside)} saat</td>
+      <td>${safe(day.outside)} saat</td>
       <td>${safe(day.total)} saat</td>
     </tr>
   `).join("");
@@ -70,7 +80,7 @@ function buildPdfHtml(data) {
         font-family: Arial, sans-serif;
         color: #111;
         padding: 8px;
-        font-size: 10.5px;
+        font-size: 10px;
         line-height: 1.2;
         page-break-inside: avoid;
       }
@@ -98,7 +108,7 @@ function buildPdfHtml(data) {
       .section-title {
         margin-top: 7px;
         margin-bottom: 4px;
-        font-size: 11.5px;
+        font-size: 11px;
         font-weight: 700;
         border-left: 3px solid #111;
         padding-left: 6px;
@@ -124,7 +134,7 @@ function buildPdfHtml(data) {
       }
 
       .label {
-        font-size: 9.5px;
+        font-size: 9px;
         color: #444;
         margin-bottom: 2px;
         font-weight: 700;
@@ -146,7 +156,7 @@ function buildPdfHtml(data) {
       th, td {
         border: 1px solid #ccc;
         padding: 3px 4px;
-        font-size: 9.5px;
+        font-size: 9px;
         text-align: left;
         vertical-align: top;
       }
@@ -156,7 +166,7 @@ function buildPdfHtml(data) {
       }
 
       .totals {
-        width: 260px;
+        width: 290px;
         margin-left: auto;
         margin-top: 6px;
         page-break-inside: avoid;
@@ -168,7 +178,7 @@ function buildPdfHtml(data) {
         border-bottom: 1px dashed #ccc;
         padding: 2px 0;
         gap: 8px;
-        font-size: 9.5px;
+        font-size: 9px;
       }
 
       .signatures {
@@ -183,7 +193,7 @@ function buildPdfHtml(data) {
         border: 1px solid #ccc;
         padding: 6px;
         border-radius: 5px;
-        min-height: 78px;
+        min-height: 90px;
         page-break-inside: avoid;
       }
 
@@ -200,7 +210,7 @@ function buildPdfHtml(data) {
 
       .sig-img {
         width: 100%;
-        max-height: 40px;
+        max-height: 42px;
         object-fit: contain;
         border-top: 1px dashed #999;
         padding-top: 5px;
@@ -235,6 +245,13 @@ function buildPdfHtml(data) {
       .avoid-break {
         page-break-inside: avoid;
       }
+
+      .mini-summary {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        margin-top: 6px;
+      }
     </style>
   </head>
   <body>
@@ -244,7 +261,6 @@ function buildPdfHtml(data) {
           src="https://raw.githubusercontent.com/irfannkoklu-bot/servis-saas-frontend/main/logo.png"
           class="logo"
         />
-
         <div>
           <div class="title">SERVİS RAPORU</div>
           <div class="sub">
@@ -257,8 +273,8 @@ function buildPdfHtml(data) {
       </div>
 
       <div class="header-right">
-        <strong>Başlama:</strong> ${safe(data.startDate)}<br>
-        <strong>Bitiş:</strong> ${safe(data.endDate)}<br>
+        <strong>Başlama:</strong> ${formatDateTR(data.startDate)}<br>
+        <strong>Bitiş:</strong> ${formatDateTR(data.endDate)}<br>
         <strong>Para Birimi:</strong> ${safe(currency)}
       </div>
     </div>
@@ -293,7 +309,7 @@ function buildPdfHtml(data) {
     </div>
 
     <div class="section-title">Servis Bilgileri</div>
-    <div class="grid-3">
+    <div class="grid-2">
       <div class="field">
         <div class="label">Arıza Türü</div>
         <div class="value">${safe(faultTypes)}</div>
@@ -301,10 +317,6 @@ function buildPdfHtml(data) {
       <div class="field">
         <div class="label">Servis Türü</div>
         <div class="value">${safe(serviceTypes)}</div>
-      </div>
-      <div class="field">
-        <div class="label">Müşteri E-Posta</div>
-        <div class="value">${safe(data.customerEmail)}</div>
       </div>
     </div>
 
@@ -333,13 +345,16 @@ function buildPdfHtml(data) {
       <thead>
         <tr>
           <th>Tarih</th>
+          <th>Ulaşım Süresi</th>
           <th>Başlangıç</th>
           <th>Bitiş</th>
-          <th>Günlük Süre</th>
+          <th>Mesai İçi</th>
+          <th>Mesai Dışı</th>
+          <th>Toplam</th>
         </tr>
       </thead>
       <tbody>
-        ${workDaysRows || `<tr><td colspan="4">Çalışma günü girilmedi.</td></tr>`}
+        ${workDaysRows || `<tr><td colspan="7">Çalışma günü girilmedi.</td></tr>`}
       </tbody>
     </table>
 
@@ -390,15 +405,30 @@ function buildPdfHtml(data) {
       </div>
     </div>
 
+    <div class="mini-summary">
+      <div class="field">
+        <div class="label">Toplam Ulaşım</div>
+        <div class="value">${safe(data.travelHours)} saat</div>
+      </div>
+      <div class="field">
+        <div class="label">Toplam Çalışma</div>
+        <div class="value">${safe(data.workHours)} saat</div>
+      </div>
+      <div class="field">
+        <div class="label">Konaklama</div>
+        <div class="value">${money(data.lodgingCost, currency)}</div>
+      </div>
+    </div>
+
     <div class="section-title">Yetkililer ve İmzalar</div>
     <div class="grid-2">
       <div class="field">
         <div class="label">Servis Yetkilisi</div>
-        <div class="value">${safe(data.serviceStaff)} - ${safe(data.serviceStaffEmail)}</div>
+        <div class="value">${safe(data.serviceStaff)}<br>Mail: ${safe(data.serviceStaffEmail)}</div>
       </div>
       <div class="field">
         <div class="label">Firma Yetkilisi</div>
-        <div class="value">${safe(data.companyOfficer)}</div>
+        <div class="value">${safe(data.companyOfficer)}<br>Mail: ${safe(data.companyOfficerEmail)}</div>
       </div>
     </div>
 
