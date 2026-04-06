@@ -36,6 +36,26 @@ transporter.verify((error, success) => {
   }
 });
 
+// TEST MAIL ENDPOINT
+app.get("/test-mail", async (req, res) => {
+  try {
+    console.log("TEST MAIL BAŞLADI");
+
+    const info = await transporter.sendMail({
+      from: '"Mono CNC" <irfannkoklu@gmail.com>',
+      to: "irfannkoklu@gmail.com",
+      subject: "TEST MAIL",
+      text: "Bu bir test mailidir"
+    });
+
+    console.log("TEST MAIL BAŞARILI:", info);
+    res.send("Mail gönderildi");
+  } catch (err) {
+    console.log("TEST MAIL HATASI:", err);
+    res.status(500).send(err.message);
+  }
+});
+
 function getCurrencySymbol(currency) {
   return currency === "USD" ? "$" : "₺";
 }
