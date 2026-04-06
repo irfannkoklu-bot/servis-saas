@@ -17,15 +17,20 @@ const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
   secure: true,
+  logger: true,
+  debug: true,
   auth: {
     user: "irfannkoklu@gmail.com",
     pass: "exjisramycefands"
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
 transporter.verify((error, success) => {
   if (error) {
-    console.log("MAIL VERIFY HATASI:", error);
+    console.log("MAIL VERIFY HATASI FULL:", error);
   } else {
     console.log("MAIL SERVER HAZIR");
   }
@@ -515,6 +520,8 @@ app.post("/api/pdf", async (req, res) => {
         recipients.push(String(data.customerEmail).trim());
       }
 
+      console.log("MAIL ALICILARI:", recipients);
+
       const info = await transporter.sendMail({
         from: '"Mono CNC" <irfannkoklu@gmail.com>',
         to: recipients.join(", "),
@@ -528,9 +535,12 @@ app.post("/api/pdf", async (req, res) => {
         ]
       });
 
-      console.log("MAIL GÖNDERİLDİ:", info.messageId);
+      console.log("MAIL GÖNDERİLDİ MESSAGE ID:", info.messageId);
+      console.log("MAIL RESPONSE:", info.response);
+      console.log("MAIL ACCEPTED:", info.accepted);
+      console.log("MAIL REJECTED:", info.rejected);
     } catch (mailError) {
-      console.log("MAIL HATASI DETAY:", mailError);
+      console.log("MAIL HATASI DETAY FULL:", mailError);
     }
 
     if (!fs.existsSync(pdfPath)) {
