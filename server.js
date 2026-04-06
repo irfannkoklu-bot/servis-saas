@@ -23,6 +23,14 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("MAIL VERIFY HATASI:", error);
+  } else {
+    console.log("MAIL SERVER HAZIR");
+  }
+});
+
 function getCurrencySymbol(currency) {
   return currency === "USD" ? "$" : "₺";
 }
@@ -507,10 +515,10 @@ app.post("/api/pdf", async (req, res) => {
         recipients.push(String(data.customerEmail).trim());
       }
 
-      await transporter.sendMail({
+      const info = await transporter.sendMail({
         from: '"Mono CNC" <irfannkoklu@gmail.com>',
         to: recipients.join(", "),
-        subject: "Servis Raporu",
+        subject: `Servis Raporu - ${data.companyName || "Müşteri"}`,
         text: "Servis raporunuz ektedir.",
         attachments: [
           {
@@ -520,9 +528,9 @@ app.post("/api/pdf", async (req, res) => {
         ]
       });
 
-      console.log("MAIL GÖNDERİLDİ");
+      console.log("MAIL GÖNDERİLDİ:", info.messageId);
     } catch (mailError) {
-      console.log("MAIL HATASI:", mailError.message);
+      console.log("MAIL HATASI DETAY:", mailError);
     }
 
     if (!fs.existsSync(pdfPath)) {
