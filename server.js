@@ -14,10 +14,12 @@ app.get("/", (req, res) => {
 });
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: "irfannkoklu@gmail.com",
-    pass: "exji sram ycef ands"
+    pass: "exjisramycefands"
   }
 });
 
