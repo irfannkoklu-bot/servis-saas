@@ -3,7 +3,9 @@ const puppeteer = require("puppeteer-core");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const app = express();
 app.use(cors());
@@ -13,45 +15,20 @@ app.get("/", (req, res) => {
   res.send("Server çalışıyor!");
 });
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  logger: true,
-  debug: true,
-  auth: {
-    user: "irfannkoklu@gmail.com",
-    pass: "exjisramycefands"
-  },
-  tls: {
-    rejectUnauthorized: false
-  }
-});
-
-transporter.verify((error, success) => {
-  if (error) {
-    console.log("MAIL VERIFY HATASI FULL:", error);
-  } else {
-    console.log("MAIL SERVER HAZIR");
-  }
-});
-
 // TEST MAIL ENDPOINT
 app.get("/test-mail", async (req, res) => {
   try {
-    console.log("TEST MAIL BAŞLADI");
-
-    const info = await transporter.sendMail({
-      from: '"Mono CNC" <irfannkoklu@gmail.com>',
-      to: "irfannkoklu@gmail.com",
+    const response = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: ["irfannkoklu@gmail.com"],
       subject: "TEST MAIL",
       text: "Bu bir test mailidir"
     });
 
-    console.log("TEST MAIL BAŞARILI:", info);
+    console.log("RESEND TEST BAŞARILI:", response);
     res.send("Mail gönderildi");
   } catch (err) {
-    console.log("TEST MAIL HATASI:", err);
+    console.log("RESEND TEST HATASI:", err);
     res.status(500).send(err.message);
   }
 });
@@ -540,27 +517,24 @@ app.post("/api/pdf", async (req, res) => {
         recipients.push(String(data.customerEmail).trim());
       }
 
-      console.log("MAIL ALICILARI:", recipients);
+      console.log("RESEND ALICILAR:", recipients);
 
-      const info = await transporter.sendMail({
-        from: '"Mono CNC" <irfannkoklu@gmail.com>',
-        to: recipients.join(", "),
+      const response = await resend.emails.send({
+        from: "onboarding@resend.dev",
+        to: recipients,
         subject: `Servis Raporu - ${data.companyName || "Müşteri"}`,
         text: "Servis raporunuz ektedir.",
         attachments: [
           {
             filename: fileName,
-            path: pdfPath
+            content: fs.readFileSync(pdfPath).toString("base64")
           }
         ]
       });
 
-      console.log("MAIL GÖNDERİLDİ MESSAGE ID:", info.messageId);
-      console.log("MAIL RESPONSE:", info.response);
-      console.log("MAIL ACCEPTED:", info.accepted);
-      console.log("MAIL REJECTED:", info.rejected);
+      console.log("RESEND MAIL BAŞARILI:", response);
     } catch (mailError) {
-      console.log("MAIL HATASI DETAY FULL:", mailError);
+      console.log("RESEND MAIL HATASI:", mailError);
     }
 
     if (!fs.existsSync(pdfPath)) {
