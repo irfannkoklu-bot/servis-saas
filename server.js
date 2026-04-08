@@ -512,30 +512,48 @@ app.post("/api/pdf", async (req, res) => {
     browser = null;
 
     try {
-      const recipients = ["irfannkoklu@gmail.com"];
-      if (data.customerEmail && String(data.customerEmail).trim()) {
-        recipients.push(String(data.customerEmail).trim());
+  const pdfBase64 = fs.readFileSync(pdfPath).toString("base64");
+
+  // 1) Önce sana gönder
+  const selfResponse = await resend.emails.send({
+    from: "onboarding@resend.dev",
+    to: ["irfannkoklu@gmail.com"],
+    subject: `Servis Raporu - ${data.companyName || "Müşteri"}`,
+    text: "Servis raporunuz ektedir.",
+    attachments: [
+      {
+        filename: fileName,
+        content: pdfBase64
       }
+    ]
+  });
 
-      console.log("RESEND ALICILAR:", recipients);
+  console.log("RESEND SELF MAIL BAŞARILI:", selfResponse);
 
-      const response = await resend.emails.send({
+  // 2) Sonra müşteriye ayrı gönder
+  if (data.customerEmail && String(data.customerEmail).trim()) {
+    try {
+      const customerResponse = await resend.emails.send({
         from: "onboarding@resend.dev",
-        to: recipients,
+        to: [String(data.customerEmail).trim()],
         subject: `Servis Raporu - ${data.companyName || "Müşteri"}`,
         text: "Servis raporunuz ektedir.",
         attachments: [
           {
             filename: fileName,
-            content: fs.readFileSync(pdfPath).toString("base64")
+            content: pdfBase64
           }
         ]
       });
 
-      console.log("RESEND MAIL BAŞARILI:", response);
-    } catch (mailError) {
-      console.log("RESEND MAIL HATASI:", mailError);
+      console.log("RESEND CUSTOMER MAIL BAŞARILI:", customerResponse);
+    } catch (customerMailError) {
+      console.log("RESEND CUSTOMER MAIL HATASI:", customerMailError);
     }
+  }
+} catch (mailError) {
+  console.log("RESEND SELF MAIL HATASI:", mailError);
+}
 
     if (!fs.existsSync(pdfPath)) {
       return res.status(500).send("PDF oluşturulamadı.");
