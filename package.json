@@ -9,6 +9,7 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "nodemailer": "^7.0.3",
-    "puppeteer-core": "^24.6.1"
+    "puppeteer-core": "^24.6.1",
+    "resend": "^3.2.0"
   }
 }
